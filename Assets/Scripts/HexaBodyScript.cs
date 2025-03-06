@@ -8,20 +8,16 @@ using Unity.XR.CoreUtils;
 public class HexaBodyScript : MonoBehaviour
 {
     [Header("XR Toolkit Parts")]
-    public XROrigin XRRig;
+    public XROrigin xrOrigin;
     // De main camera blijft onderdeel van de XR Origin en wordt automatisch getrackt.
 
     [Header("Action-based Controller")]
-    public InputActionProperty positionAction;
+    public InputActionProperty movementAction;      // Generic 2D input (works with both thumbstick/trackpad)
     public InputActionProperty rightHandPositionAction;
     public InputActionProperty rightHandRotationAction;
     public InputActionProperty leftHandPositionAction;
     public InputActionProperty leftHandRotationAction;
-
-    public InputActionReference RightTrackpadTouch;
-    public InputActionReference RightTrackpadPressed;
-    // rotationAction laten we voorlopig weg als we de headtracking van XR Origin gebruiken
-
+   
     [Header("Hexabody Parts")]
     public GameObject Head;    // Dit is de hoofd van je speler (avatar) die je wilt koppelen
     public GameObject Chest;
@@ -53,7 +49,7 @@ public class HexaBodyScript : MonoBehaviour
 
     //-----------Input Values------------------------------------------------//
 
-    private Vector3 controllerPosition;
+     private Vector2 movementValue;
     private Quaternion headYaw;
     private Vector3 moveDirection;
     private Vector3 MonoBallTorque;
@@ -94,7 +90,7 @@ public class HexaBodyScript : MonoBehaviour
         currentChestRotation = Chest.transform.rotation;
 
         // Initialiseer CameraControllerPos
-        CameraControllerPos = XRRig.Camera.transform.position;
+        CameraControllerPos = xrOrigin.Camera.transform.position;
         CrouchTarget = Vector3.zero;  // Initialiseer CrouchTarget\
 
         // Cache de Rigidbody reference
@@ -117,24 +113,20 @@ public class HexaBodyScript : MonoBehaviour
 
     private void EnableInputActions()
     {
-    positionAction.action?.Enable();
+    movementAction.action?.Enable();
     rightHandPositionAction.action?.Enable();
     rightHandRotationAction.action?.Enable();
     leftHandPositionAction.action?.Enable();
     leftHandRotationAction.action?.Enable();
-    RightTrackpadTouch.action?.Enable();
-    RightTrackpadPressed.action?.Enable();
     }
 
     private void DisableInputActions()
     {
-    positionAction.action?.Disable();
+    movementAction.action?.Disable();
     rightHandPositionAction.action?.Disable();
     rightHandRotationAction.action?.Disable();
     leftHandPositionAction.action?.Disable();
     leftHandRotationAction.action?.Disable();
-    RightTrackpadTouch.action?.Disable();
-    RightTrackpadPressed.action?.Disable();
     }
 
     void Update()
@@ -143,7 +135,7 @@ public class HexaBodyScript : MonoBehaviour
         // Nieuw: Update de positie van het player-model zodat het hoofd (avatar) de camera volgt.
         UpdatePlayerBodyPosition();
         // Update camera positie
-        CameraControllerPos = XRRig.Camera.transform.position;
+        CameraControllerPos = xrOrigin.Camera.transform.position;
     }
 
     void FixedUpdate()
@@ -161,23 +153,19 @@ public class HexaBodyScript : MonoBehaviour
     // Leest de inputwaarden (hier de positie) en bepaalt de yaw rotatie van de camera
     private void GetControllerInputValues()
     {
-        controllerPosition = positionAction.action.ReadValue<Vector3>();
         // Gebruik de rotatie van de XR Origin camera (die wordt getrackt door de HMD)
-        headYaw = Quaternion.Euler(0, XRRig.Camera.transform.eulerAngles.y, 0); 
-        moveDirection = headYaw * new Vector3(RightTrackpad.x, 0, RightTrackpad.y);
+        headYaw = Quaternion.Euler(0, xrOrigin.Camera.transform.eulerAngles.y, 0); 
+
+        // Vervang de trackpad code met generic movement input
+        movementValue = movementAction.action.ReadValue<Vector2>();
+        moveDirection = headYaw * new Vector3(movementValue.x, 0, movementValue.y);
         MonoBallTorque = new Vector3(moveDirection.z, 0, moveDirection.x);
-        // Right Controller
-        // Position & Rotation
-            // Right Controller
+
+        // Right Controller Position & Rotation
         RightHandControllerPos = rightHandPositionAction.action.ReadValue<Vector3>();
         RightHandControllerRotation = rightHandRotationAction.action.ReadValue<Quaternion>();
 
-        // Trackpad
-        RightTrackpad = RightTrackpadTouch.action.ReadValue<Vector2>();
-        RightTrackpadPressedValue = RightTrackpadPressed.action.ReadValue<float>();  
-        RightTrackpadTouched = RightTrackpadTouch.action.ReadValue<float>();
-
-        // Left Controller
+        // Left Controller Position & Rotation
         LeftHandControllerPos = leftHandPositionAction.action.ReadValue<Vector3>();
         LeftHandControllerRotation = leftHandRotationAction.action.ReadValue<Quaternion>();
     }
@@ -188,7 +176,7 @@ public class HexaBodyScript : MonoBehaviour
     {
         // Door de positie van de camera toe te wijzen aan het Head-object,
         // zorg je ervoor dat je player-model mee beweegt met de HMD.
-        Head.transform.position = XRRig.Camera.transform.position;
+        Head.transform.position = xrOrigin.Camera.transform.position;
     }
 
     // Zorgt voor een vloeiende rotatie van de Chest richting de head yaw
@@ -201,17 +189,18 @@ public class HexaBodyScript : MonoBehaviour
 
     private void movePlayerViaController()
     {
-        if (RightTrackpadTouched == 0)
+        float inputMagnitude = movementValue.magnitude;
+    
+        if (inputMagnitude < 0.1f)  // Universal deadzone
         {
             stopMonoball();
         }
-        else if (RightTrackpadPressedValue == 0 && RightTrackpadTouched == 1)
+        else 
         {
-            moveMonoball(moveForceWalk);
-        }
-        else if (RightTrackpadPressedValue == 1)
-        {
-            moveMonoball(moveForceSprint);
+            // Smooth interpolation between walk and sprint based on input intensity
+            float normalizedInput = Mathf.InverseLerp(0.1f, 1f, inputMagnitude);
+            float force = Mathf.Lerp(moveForceWalk, moveForceSprint, normalizedInput);
+            moveMonoball(force);
         }
     }
     private void moveMonoball(float force)
@@ -235,7 +224,7 @@ public class HexaBodyScript : MonoBehaviour
     private void SpineContractionOnRealWorldCrouch()
     {
         // Berekenen van crouch waarde relatief aan start positie
-        float headHeight = XRRig.Camera.transform.localPosition.y;
+        float headHeight = xrOrigin.Camera.transform.localPosition.y;
         float crouchAmount = Mathf.Clamp(headHeight - additionalHeight, lowestCrouch, highestCrouch);
     
         // Update CrouchTarget
