@@ -33,7 +33,7 @@ public class HexaBodyScript : MonoBehaviour
     public ConfigurableJoint Spine;
 
     [Header("Hexabody Drag")]
-    public float angularDragOnMove;
+    public float angularDampingOnMove;
     public float angularBreakDrag;
 
     [Header("Hexabody Movespeed")]
@@ -217,18 +217,17 @@ public class HexaBodyScript : MonoBehaviour
     private void moveMonoball(float force)
     {
         monoBallRb.freezeRotation = false;
-        monoBallRb.angularDamping = angularDragOnMove;
+        monoBallRb.angularDamping = angularDampingOnMove;
         monoBallRb.AddTorque(MonoBallTorque.normalized * force, ForceMode.Force);
     }
 
     private void stopMonoball()
     {
-        Rigidbody rb = MonoBall.GetComponent<Rigidbody>();
-        rb.angularDamping = angularBreakDrag;
+        monoBallRb.angularDamping = angularBreakDrag;
     
-        if (rb.velocity.magnitude < 0.01f)  // Betere check voor stilstand
+        if (monoBallRb.linearVelocity.magnitude < 0.01f)  // Betere check voor stilstand
         {
-        rb.freezeRotation = true;
+        monoBallRb.freezeRotation = true;
         }
     }
 
