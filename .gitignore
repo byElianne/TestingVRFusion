@@ -72,8 +72,9 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-/Assets
 
 
 /Assets
 /Assets/Samples
+/Assets/Samples/XR Interaction Toolkit/3.0.7
+/Assets/Samples/XR Interaction Toolkit/3.0.7/Starter Assets
