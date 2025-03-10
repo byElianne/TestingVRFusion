@@ -1523,6 +1523,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "RightTrackPadPressed",
+                    "type": "Value",
+                    "id": "5ae2d043-68fb-43fd-bbef-62f86e26e488",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RightTrackPadTouched",
+                    "type": "Value",
+                    "id": "773c2dd4-0cd1-4f27-a90a-24f5ced93935",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -1930,6 +1948,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Thumbstick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3b133f06-2c6a-45ee-b277-11b2369ae03c",
+                    "path": "<ViveController>{RightHand}/trackpadClicked",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightTrackPadPressed",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cea45b86-d61c-4091-b6a3-f38f9ca03714",
+                    "path": "<ViveController>{RightHand}/trackpadTouched",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightTrackPadTouched",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
