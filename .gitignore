@@ -76,6 +76,7 @@ crashlytics-build.properties
 # Ignore everything in Assets except Scripts
 /[Aa]ssets/*
 !/[Aa]ssets/[Ss]cripts/
+!/[Aa]ssets/[Ss]cenes/
 /Assets/Samples
 /Assets/Settings
 /ProjectSettings
