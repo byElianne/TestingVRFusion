@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 8983356816305053068}
   - component: {fileID: 748884075413180505}
   - component: {fileID: 7648742233237054588}
+  - component: {fileID: 8615185085402137825}
+  - component: {fileID: 1338062503563814120}
   m_Layer: 0
   m_Name: PlayerCharacter
   m_TagString: Untagged
@@ -131,6 +133,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 7648742233237054588}
+  - {fileID: 8615185085402137825}
+  - {fileID: 1338062503563814120}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &748884075413180505
 CharacterController:
@@ -174,3 +178,32 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &8615185085402137825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5890399964061773344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715ffd44f69bba54393886141e22a7bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerSpeed: 2
+  JumpForce: 5
+  GravityValue: -9.81
+--- !u!114 &1338062503563814120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5890399964061773344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f5ca9f7083e4e4f8a9f6a94195d3e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MeshRenderer: {fileID: 2567225402221197950}
+  _NetworkedColor: {r: 0, g: 0, b: 0, a: 0}
