@@ -80,3 +80,9 @@ crashlytics-build.properties
 /Assets/Samples
 /Assets/Settings
 /ProjectSettings
+*.fusion
+*.prefab
+*.meta
+/Packages
+/ProjectSettings
+/Assets/XR
